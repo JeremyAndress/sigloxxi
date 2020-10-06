@@ -22,7 +22,7 @@ def create_user(db: Session,obj_in: UserCreate):
     arsene =  Response_SM(status=False,result= '...')
     try:
         db_obj = User(
-            email=obj_in.email,
+            email=obj_in.email,name=obj_in.name,
             password=get_password_hash(obj_in.password),
             rol_id=obj_in.rol_id
         )

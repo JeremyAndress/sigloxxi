@@ -10,6 +10,7 @@ class Login(UserBase):
     password: str
 
 class UserCreate(Login):
+    name: str
     rol_id: Optional[int]
 
 class UserList(UserCreate):

@@ -19,11 +19,11 @@ def user_create(user:UserCreate, db:Session = Depends(get_db)):
 
 @router.post("/login/",response_model=TokenUser,tags=["user"])
 def login(user:Login,db: Session = Depends(get_db)):
-    user = authenticate(db,user.username,user.password)
+    user = authenticate(db,user.email,user.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     return {
-        "access_token": create_access_token(user.username),
+        "access_token": create_access_token(user.email),
         "token_type": "bearer",
         "rol_id": user.rol.id if user.rol else None,
         "rol_name": user.rol.name if user.rol else None

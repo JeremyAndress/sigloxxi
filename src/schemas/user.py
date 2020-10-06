@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from .response import Pagination
 # Shared properties
 class UserBase(BaseModel):
-    username: Optional[str] = None
+    email: Optional[str] = None
 
 # Properties to receive via API on creation
 class Login(UserBase):

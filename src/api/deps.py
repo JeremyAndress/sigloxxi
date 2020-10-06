@@ -17,10 +17,10 @@ credentials_exception = HTTPException(
 def get_token_bearer(token: str = Header(...)):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        email: str = payload.get("sub")
+        if email is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(email=email)
     except JWTError as e:
         logger.error(f'error {e}')
         raise credentials_exception
@@ -29,7 +29,7 @@ def get_token_bearer(token: str = Header(...)):
 def get_current_user(
     token_data: str = Depends(get_token_bearer),db: Session = Depends(get_db)
 ):
-    user = get_by_email(db, username=token_data.username)
+    user = get_by_email(db, email=token_data.email)
     if not user:
         raise credentials_exception
     return user
@@ -37,7 +37,7 @@ def get_current_user(
 def get_admin_user(
     token_data: str = Depends(get_token_bearer),db: Session = Depends(get_db)
 ):
-    user = get_by_email(db, username=token_data.username) or {}
+    user = get_by_email(db, email=token_data.email) or {}
     if not user:
         raise credentials_exception
     rol = getattr(getattr(user,'rol'),'id',None) 

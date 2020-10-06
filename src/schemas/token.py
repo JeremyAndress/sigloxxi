@@ -10,4 +10,4 @@ class TokenUser(Token):
     rol_name: Optional[str]
 
 class TokenData(BaseModel):
-    username: Optional[str] = None
+    email: Optional[str] = None

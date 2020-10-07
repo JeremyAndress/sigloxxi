@@ -7,11 +7,11 @@ from schemas.user import UserCreate,UserList
 from schemas.response import Response_SM
 from core.security import verify_password,get_password_hash
 
-def get_by_email(db: Session,username: str):
-    return db.query(User).filter(User.username == username).first()
+def get_by_email(db: Session,email: str):
+    return db.query(User).filter(User.email == email).first()
 
-def authenticate(db: Session,username: str, password: str):
-    user = get_by_email(db, username=username)
+def authenticate(db: Session,email: str, password: str):
+    user = get_by_email(db, email=email)
     if not user:
         return None
     if not verify_password(password, user.password):
@@ -22,7 +22,7 @@ def create_user(db: Session,obj_in: UserCreate):
     arsene =  Response_SM(status=False,result= '...')
     try:
         db_obj = User(
-            username=obj_in.username,
+            email=obj_in.email,name=obj_in.name,
             password=get_password_hash(obj_in.password),
             rol_id=obj_in.rol_id
         )
@@ -59,7 +59,7 @@ def update_user_cn(upd_user:UserList,db:Session):
         user = db.query(User).filter(User.id == upd_user.id).update({
             User.rol_id: upd_user.rol_id,
             User.password: get_password_hash(upd_user.password),
-            User.username: upd_user.username
+            User.email: upd_user.email
         })
         db.commit()
         db.flush()

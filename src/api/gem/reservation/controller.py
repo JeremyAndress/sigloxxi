@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import extract
+from datetime import datetime
 from utils.logging import logger
 from utils.pagination import paginate
 from schemas.reservation import ReservationBase, Reservation as Reservation_Update
@@ -13,22 +15,42 @@ def get_all_reservation_cn(page:int, db:Session):
     reservation = paginate(db.query(Reservation),page,10)
     return reservation
 
+def get_reservation_day(date,db:Session):
+    count = 0
+    try:
+        count = db.query(Reservation).filter(
+            extract('day',Reservation.date_applied ) == date.day,
+            extract('month',Reservation.date_applied ) == date.month,
+            extract('year',Reservation.date_applied ) == date.year
+        ).count()
+    except Exception as e:
+        logger.error(f'{e}')
+    return count
+
+def permission_reservation(day,db:Session):
+    tables = count_tables(db) 
+    res = get_reservation_day(day ,db)
+    logger.info(f'tables count {tables} res count {res}')
+    return tables - res
+
 def create_reservation(rsvt: ReservationBase, db:Session):
     arsene = Response_SM(status = False, result = '...')
     try:
-        tables = count_tables(db) 
-        logger.info(f'tables count {tables}')
-        
-        reservation_data = Reservation(
-            user_id = rsvt.user_id,
-            date_applied = rsvt.date_applied,
-            status_id = 1
-        )
-        db.add(reservation_data)
-        db.commit()
-        db.refresh(reservation_data)
-        arsene.status = True if reservation_data.id else False
-        arsene.result = 'success' if reservation_data else 'reservation cant create'
+    
+        prms = permission_reservation(rsvt.date_applied,db)
+        if prms >= 1:
+            reservation_data = Reservation(
+                user_id = rsvt.user_id,
+                date_applied = rsvt.date_applied,
+                status_id = 1
+            )
+            db.add(reservation_data)
+            db.commit()
+            db.refresh(reservation_data)
+            arsene.status = True if reservation_data.id else False
+            arsene.result = 'success' if reservation_data else 'reservation cant create'
+        else:
+            arsene.result = 'Day without reservations available'
     except Exception as e:
         arsene.result = f'error {e}'
         logger.error(f'error {e}')

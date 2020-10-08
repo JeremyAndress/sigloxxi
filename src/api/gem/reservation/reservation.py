@@ -7,12 +7,13 @@ from schemas.reservation import (
     ReservationBase,UpdateReservation, ReservationList
 )
 from schemas.response import Response_SM
-from schemas.user import UserCreate
+from schemas.user import UserCreate,UserList
 from schemas.token import TokenUser
 from core.security import create_access_token
 from api.deps import get_admin_user, get_client_user
 from .controller import (
     create_reservation as create_rsvt,
+    get_user_reservation_cn,
     get_all_reservation_cn, get_all_rsvt_status_cn,
     delete_reservation_cn, update_reservation_cn,
     create_reservation_status as create_rsvt_st,
@@ -20,6 +21,24 @@ from .controller import (
     delete_reservation_status_cn as delete_rsvt_st_cn
 )
 router = APIRouter()
+
+@router.get("/reservation/get_all_reservation/", response_model = ReservationList,tags=["admin"])
+def get_all_reservation(
+    page: int,
+    db: Session = Depends(get_db),
+    current_user: UserCreate = Depends(get_admin_user)
+):
+    reservation = get_all_reservation_cn(page,db)
+    return reservation
+
+@router.get("/reservation/get_reservation_user/", response_model = ReservationList,tags=["cliente"])
+def get_user_reservation(
+    page: int,
+    db: Session = Depends(get_db),
+    current_user: UserList = Depends(get_admin_user)
+):
+    reservation = get_user_reservation_cn(current_user,page,db)
+    return reservation
 
 @router.post("/reservation/reservation_create/", response_model = Response_SM,tags=["admin","cliente"])
 def reservation_create(
@@ -30,15 +49,6 @@ def reservation_create(
     '''La creacion de reserva se permite segun la cantidad de mesas disponibles'''
     response = create_rsvt(rsvt,db)
     return response
-
-@router.get("/reservation/get_all_reservation/", response_model = ReservationList,tags=["admin"])
-def get_all_reservation(
-    page: int,
-    db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_admin_user)
-):
-    reservation = get_all_reservation_cn(page,db)
-    return reservation
 
 @router.delete("/reservation/delete_reservation/", response_model = Response_SM,tags=["admin","cliente"])
 def delete_reservation(

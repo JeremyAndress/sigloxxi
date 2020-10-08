@@ -3,13 +3,21 @@ from sqlalchemy.sql import extract
 from datetime import datetime
 from utils.logging import logger
 from utils.pagination import paginate
-from schemas.reservation import ReservationBase, UpdateReservation, ReservationStatus as ResStatus
+from schemas.user import UserList
 from schemas.response import Response_SM
+from schemas.reservation import ReservationBase, UpdateReservation, ReservationStatus as ResStatus
 from models import Reservation, ReservationStatus
 from api.gem.tables.controller import count_tables
 
 def get_all_reservation_cn(page:int, db:Session):
     reservation = paginate(db.query(Reservation),page,10)
+    return reservation
+
+def get_user_reservation_cn(user:UserList,page:int, db:Session):
+    query = db.query(Reservation).filter(
+        Reservation.user_id == user.id
+    )
+    reservation = paginate(query,page,10)
     return reservation
 
 def get_reservation_day(date,db:Session):

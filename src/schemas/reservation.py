@@ -6,9 +6,10 @@ from .response import Pagination
 class ReservationBase(BaseModel):
     date_applied: datetime
     user_id: int
-
+    
 class Reservation(ReservationBase):
     id: int
+    status_id: int
     class Config:
         orm_mode = True
 

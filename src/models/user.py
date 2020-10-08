@@ -6,7 +6,7 @@ class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    email = Column(String)
+    email = Column(String,unique=True)
     password = Column(String)
     rol_id =  Column(Integer,ForeignKey("rol.id",ondelete='cascade'),nullable=True)
     rol = relationship("Rol")

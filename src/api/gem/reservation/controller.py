@@ -14,7 +14,8 @@ def create_reservation(rsvt: ReservationBase, db:Session):
     try:
         reservation_data = Reservation(
             user_id = rsvt.user_id,
-            date_applied = rsvt.date_applied
+            date_applied = rsvt.date_applied,
+            status_id = 1
         )
         db.add(reservation_data)
         db.commit()
@@ -30,7 +31,8 @@ def update_reservation_cn(reservation: Reservation_Update, db: Session):
     arsene = Response_SM(status=False,result= '...')
     try:
         reservation_data = db.query(Reservation).filter(Reservation.id == reservation.id).update({
-            Reservation.date_applied: reservation.date_applied
+            Reservation.date_applied: reservation.date_applied,
+            Reservation.status_id: reservation.status_id
         })
         db.commit()
         db.flush()

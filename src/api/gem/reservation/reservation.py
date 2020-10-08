@@ -15,16 +15,17 @@ from .controller import (
 )
 router = APIRouter()
 
-@router.post("/reservation_create/", response_model = Response_SM)
+@router.post("/reservation/reservation_create/", response_model = Response_SM,tags=["admin","cliente"])
 def reservation_create(
     rsvt: ReservationBase, 
     db:Session = Depends(get_db),
     current_user: UserCreate = Depends(get_client_user)
 ):
+    '''La creacion de reserva se permite segun la cantidad de mesas disponibles'''
     response = create_rsvt(rsvt,db)
     return response
 
-@router.get("/get_all_reservation/", response_model = ReservationList)
+@router.get("/reservation/get_all_reservation/", response_model = ReservationList,tags=["admin"])
 def get_all_reservation(
     page: int,
     db: Session = Depends(get_db),
@@ -33,7 +34,7 @@ def get_all_reservation(
     reservation = get_all_reservation_cn(page,db)
     return reservation
 
-@router.delete("/delete_reservation/", response_model = Response_SM)
+@router.delete("/reservation/delete_reservation/", response_model = Response_SM)
 def delete_reservation(
     id: int,
     db: Session = Depends(get_db),
@@ -42,11 +43,11 @@ def delete_reservation(
     response = delete_reservation_cn(id, db)
     return response
 
-@router.put("/update_reservation/", response_model = Response_SM)
+@router.put("/reservation/update_reservation/", response_model = Response_SM,tags=["admin","cliente"])
 def update_reservation(
     upd_rsvt: Reservation,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_admin_user)
+    current_user: UserCreate = Depends(get_client_user)
 ):
     response = update_reservation_cn(upd_rsvt, db)
     return response

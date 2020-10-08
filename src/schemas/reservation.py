@@ -1,9 +1,10 @@
-from .response import Pagination
+from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
+from .response import Pagination
 
 class ReservationBase(BaseModel):
-    date_applied: str
+    date_applied: datetime
     user_id: int
 
 class Reservation(ReservationBase):

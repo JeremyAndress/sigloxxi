@@ -74,7 +74,7 @@ def get_all_reservation(
 def reservation_status_create(
         rsvt: ReservationStatus, 
         db:Session = Depends(get_db),
-        current_user: UserCreate = Depends(get_client_user)
+        current_user: UserCreate = Depends(get_admin_user)
     ):
     response = create_rsvt_st(rsvt,db)
     return response
@@ -83,7 +83,7 @@ def reservation_status_create(
 def update_reservation(
     upd_status: ReservationStatus,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_client_user)
+    current_user: UserCreate = Depends(get_admin_user)
 ):
     response = update_rsvt_st_cn(upd_status, db)
     return response

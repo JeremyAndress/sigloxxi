@@ -17,3 +17,11 @@ class ReservationList(Pagination):
     data: List[Reservation]
     class Config:
         orm_mode = True
+
+class ReservationStatus(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
+
+

@@ -3,7 +3,10 @@ from utils.logging import logger
 from utils.pagination import paginate
 from schemas.reservation import ReservationBase, Reservation as Reservation_Update
 from schemas.response import Response_SM
-from models import Reservation
+from models import Reservation, ReservationStatus
+
+def get_all_rsvt_status_cn(db:Session):
+    return db.query(ReservationStatus).all()
 
 def get_all_reservation_cn(page:int, db:Session):
     reservation = paginate(db.query(Reservation),page,10)

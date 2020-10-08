@@ -4,7 +4,7 @@ from typing import List
 from db.session import get_db
 from schemas.reservation import (
     ReservationStatus,
-    ReservationBase,Reservation, ReservationList
+    ReservationBase,UpdateReservation, ReservationList
 )
 from schemas.response import Response_SM
 from schemas.user import UserCreate
@@ -40,18 +40,18 @@ def get_all_reservation(
     reservation = get_all_reservation_cn(page,db)
     return reservation
 
-@router.delete("/reservation/delete_reservation/", response_model = Response_SM)
+@router.delete("/reservation/delete_reservation/", response_model = Response_SM,tags=["admin","cliente"])
 def delete_reservation(
     id: int,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_admin_user)
+    current_user: UserCreate = Depends(get_client_user)
 ):
     response = delete_reservation_cn(id, db)
     return response
 
 @router.put("/reservation/update_reservation/", response_model = Response_SM,tags=["admin","cliente"])
 def update_reservation(
-    upd_rsvt: Reservation,
+    upd_rsvt: UpdateReservation,
     db: Session = Depends(get_db),
     current_user: UserCreate = Depends(get_client_user)
 ):

@@ -3,6 +3,10 @@ from typing import Optional, List
 from pydantic import BaseModel
 from .response import Pagination
 
+class UpdateReservation(BaseModel):
+    id: int
+    status_id: int
+
 class ReservationBase(BaseModel):
     date_applied: datetime
     user_id: int

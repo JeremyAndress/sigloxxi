@@ -4,6 +4,7 @@ from utils.pagination import paginate
 from schemas.reservation import ReservationBase, Reservation as Reservation_Update
 from schemas.response import Response_SM
 from models import Reservation, ReservationStatus
+from api.gem.tables.controller import count_tables
 
 def get_all_rsvt_status_cn(db:Session):
     return db.query(ReservationStatus).all()
@@ -15,6 +16,9 @@ def get_all_reservation_cn(page:int, db:Session):
 def create_reservation(rsvt: ReservationBase, db:Session):
     arsene = Response_SM(status = False, result = '...')
     try:
+        tables = count_tables(db) 
+        logger.info(f'tables count {tables}')
+        
         reservation_data = Reservation(
             user_id = rsvt.user_id,
             date_applied = rsvt.date_applied,

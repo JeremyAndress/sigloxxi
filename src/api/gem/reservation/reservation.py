@@ -14,7 +14,10 @@ from api.deps import get_admin_user, get_client_user
 from .controller import (
     create_reservation as create_rsvt,
     get_all_reservation_cn, get_all_rsvt_status_cn,
-    delete_reservation_cn, update_reservation_cn
+    delete_reservation_cn, update_reservation_cn,
+    create_reservation_status as create_rsvt_st,
+    update_reservation_status_cn as update_rsvt_st_cn,
+    delete_reservation_status_cn as delete_rsvt_st_cn
 )
 router = APIRouter()
 
@@ -37,14 +40,6 @@ def get_all_reservation(
     reservation = get_all_reservation_cn(page,db)
     return reservation
 
-@router.get("/reservation/get_all_reservation_status/", response_model = List[ReservationStatus],tags=["admin","cliente"])
-def get_all_reservation(
-    db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_client_user)
-):
-    status = get_all_rsvt_status_cn(db)
-    return status
-
 @router.delete("/reservation/delete_reservation/", response_model = Response_SM)
 def delete_reservation(
     id: int,
@@ -61,4 +56,43 @@ def update_reservation(
     current_user: UserCreate = Depends(get_client_user)
 ):
     response = update_reservation_cn(upd_rsvt, db)
+    return response
+
+########################
+## RESERVATION STATUS ##
+########################
+
+@router.get("/reservation/get_all_reservation_status/", response_model = List[ReservationStatus],tags=["admin","cliente"])
+def get_all_reservation(
+    db: Session = Depends(get_db),
+    current_user: UserCreate = Depends(get_client_user)
+):
+    status = get_all_rsvt_status_cn(db)
+    return status
+
+@router.post("/reservation/reservation_status_create/", response_model = Response_SM, tags = ["admin"])
+def reservation_status_create(
+        rsvt: ReservationStatus, 
+        db:Session = Depends(get_db),
+        current_user: UserCreate = Depends(get_client_user)
+    ):
+    response = create_rsvt_st(rsvt,db)
+    return response
+
+@router.put("/reservation/update_reservation_status/", response_model = Response_SM,tags=["admin"])
+def update_reservation(
+    upd_status: ReservationStatus,
+    db: Session = Depends(get_db),
+    current_user: UserCreate = Depends(get_client_user)
+):
+    response = update_rsvt_st_cn(upd_status, db)
+    return response
+
+@router.delete("/reservation/delete_reservation_status/", response_model = Response_SM, tags=["admin"])
+def delete_reservation(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: UserCreate = Depends(get_admin_user)
+):
+    response = delete_rsvt_st_cn(id, db)
     return response

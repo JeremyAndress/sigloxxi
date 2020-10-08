@@ -3,13 +3,10 @@ from sqlalchemy.sql import extract
 from datetime import datetime
 from utils.logging import logger
 from utils.pagination import paginate
-from schemas.reservation import ReservationBase, Reservation as Reservation_Update
+from schemas.reservation import ReservationBase, Reservation as Reservation_Update, ReservationStatus as ResStatus
 from schemas.response import Response_SM
 from models import Reservation, ReservationStatus
 from api.gem.tables.controller import count_tables
-
-def get_all_rsvt_status_cn(db:Session):
-    return db.query(ReservationStatus).all()
 
 def get_all_reservation_cn(page:int, db:Session):
     reservation = paginate(db.query(Reservation),page,10)
@@ -85,3 +82,53 @@ def delete_reservation_cn(id: int, db: Session):
         logger.error(f'error {e}')
     return arsene
 
+########################
+## RESERVATION STATUS ##
+########################
+
+def get_all_rsvt_status_cn(db:Session):
+    return db.query(ReservationStatus).all()
+
+def create_reservation_status(status: ResStatus, db:Session):
+    arsene =  Response_SM(status=False,result= '...')
+    try:
+        status_data = ReservationStatus(
+            name = status.name
+        )
+        db.add(status_data)
+        db.commit()
+        db.refresh(status_data)
+        arsene.status = True if status_data.id else False
+        arsene.result = 'success'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene
+
+def update_reservation_status_cn(status: ResStatus, db: Session):
+    arsene = Response_SM(status=False,result= '...')
+    try:
+        status_data = db.query(ReservationStatus).filter(ReservationStatus.id == status.id).update({
+            ReservationStatus.name: status.name,
+        })
+        db.commit()
+        db.flush()
+        arsene.status = True if status_data else False
+        arsene.result = 'success' if status_data else 'reservation status does not exist'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene
+
+def delete_reservation_status_cn(id: int, db: Session):
+    arsene = Response_SM(status = False, result= '...')
+    try:
+        status_delete = db.query(ReservationStatus).filter(ReservationStatus.id == id).delete()
+        db.commit()
+        db.flush()
+        arsene.status = True if status_delete else False
+        arsene.result = 'success' if status_delete else 'reservation status does not exist'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene

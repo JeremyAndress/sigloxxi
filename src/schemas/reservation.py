@@ -24,4 +24,3 @@ class ReservationStatus(BaseModel):
     class Config:
         orm_mode = True
 
-

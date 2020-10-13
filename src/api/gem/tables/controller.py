@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from utils.logging import logger
 from models import Tables
-from schemas.tables import TablesBase
+from schemas.tables import TablesBase, TablesUpdate
 
 def count_tables(db:Session):
     count = db.query(Tables).count()
@@ -42,7 +42,7 @@ def delete_tables_cn(id: int, db: Session):
         logger.error(f'error {e}')
     return arsene
 
-def update_table_cn(table: TablesBase, db: Session):
+def update_table_cn(table: TablesUpdate, db: Session):
     arsene = Response_SM(status = False, result = '...')
     try:
         tables_data = db.query(Tables).filter(Tables.id == table.id).update({

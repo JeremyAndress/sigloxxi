@@ -42,7 +42,20 @@ def update_sps_cn(sps:Supplies,db:Session):
         db.commit()
         db.flush()
         arsene.status = True if sps_data else False
-        arsene.result = 'success' if sps_data else 'rol does not exist'
+        arsene.result = 'success' if sps_data else 'supplies does not exist'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene
+
+def delete_sps_cn(id:int,db:Session):
+    arsene =  Response_SM(status=False,result= '...')
+    try:
+        supplies_delete = db.query(Supplies).filter(Supplies.id == id).delete()
+        db.commit()
+        db.flush()
+        arsene.status = True if supplies_delete else False
+        arsene.result = 'success' if supplies_delete else 'supplies does not exist'
     except Exception as e:
         arsene.result = f'error {e}'
         logger.error(f'error {e}')

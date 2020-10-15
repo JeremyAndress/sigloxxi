@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from db.session import get_db
 from schemas.response import Response_SM
-from schemas.tables import TablesBase, TablesUpdate
+from schemas.tables import TablesBase, TablesUpdate,ListTables
 from schemas.token import TokenUser
 from schemas.user import UserCreate
 from core.security import create_access_token
@@ -23,7 +23,7 @@ def reservation_create(
     response = create_tables(tables, db)
     return response
 
-@router.get("/tables/get_all_tables/", response_model = List[TablesUpdate],tags=["admin"])
+@router.get("/tables/get_all_tables/", response_model = ListTables,tags=["admin"])
 def get_all_reservation(
         page: int,
         db: Session = Depends(get_db),

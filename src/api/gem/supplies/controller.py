@@ -27,7 +27,7 @@ def create_sps_cn(sps:SuppliesBase,db:Session):
     except Exception as e:
         arsene.result = f'error {e}'
         logger.error(f'error {e}')
-    return 
+    return arsene
     
 def update_sps_cn(sps:Supplies,db:Session):
     arsene =  Response_SM(status=False,result= '...')

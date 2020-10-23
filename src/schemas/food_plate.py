@@ -7,10 +7,17 @@ class FoodPlateBase(BaseModel):
     name: str
     price: int
     
-class SuppliesPlate(BaseModel):
-    id: int
+
+class SuppliesPlateBase(BaseModel):
     quantity:int
-    
+
+class SuppliesPlateCreate(BaseModel):
+    quantity:int
+    food_plate_id:int
+    supplies_id:int
+
+class SuppliesPlate(SuppliesPlateBase):
+    id: int
 
 class FoodPlateCreate(FoodPlateBase):
     supplies: List[SuppliesPlate]

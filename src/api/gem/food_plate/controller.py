@@ -1,14 +1,21 @@
 from datetime import datetime
+from typing import List
 from sqlalchemy.orm import Session
 from utils.logging import logger
 from utils.pagination import paginate
-from schemas.food_plate import FoodPlateCreate
+from schemas.food_plate import FoodPlateCreate,SuppliesPlateCreate
 from schemas.response import Response_SM
 from models import FoodPlate,SuppliesPlate,Supplies
 
 def get_all_fp_cn(page:int,db:Session):
     fp  = paginate(db.query(FoodPlate),page,10)
     return fp
+
+def get_all_sp_fp_cn(food_plate_id:int,db:Session):
+    sp = db.query(SuppliesPlate).filter(
+        SuppliesPlate.food_plate_id == food_plate_id
+    ).all()
+    return sp
 
 def create_fp_cn(food_plate: FoodPlateCreate, db:Session):
     arsene =  Response_SM(status=False,result= '...')
@@ -33,6 +40,52 @@ def create_fp_cn(food_plate: FoodPlateCreate, db:Session):
                 db.add(sp_date)
                 db.commit()
                 db.refresh(sp_date)
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene  
+
+def create_sp_fp_cn(supplies_fp:List[SuppliesPlateCreate],db:Session):
+    arsene =  Response_SM(status=False,result= '...')
+    try:
+        for sp in supplies_fp:
+            if db.query(Supplies).filter(Supplies.id == sp.supplies_id).first():
+                sp_date = SuppliesPlate(
+                    quantity = sp.quantity,
+                    food_plate_id = sp.food_plate_id,
+                    supplies_id = sp.supplies_id,
+                )
+                db.add(sp_date)
+                db.commit()
+                db.refresh(sp_date)
+        arsene.status = True 
+        arsene.result = 'success'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene  
+
+def delete_fp_cn(id:int,db:Session):
+    arsene =  Response_SM(status=False,result= '...')
+    try:
+        food_delete = db.query(FoodPlate).filter(FoodPlate.id == id).delete()
+        db.commit()
+        db.flush()
+        arsene.status = True if food_delete else False
+        arsene.result = 'success' if food_delete else 'food plate does not exist'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene
+
+def delete_sp_fp_cn(id:int,db:Session):
+    arsene =  Response_SM(status=False,result= '...')
+    try:
+        food_delete = db.query(SuppliesPlate).filter(SuppliesPlate.id == id).delete()
+        db.commit()
+        db.flush()
+        arsene.status = True if food_delete else False
+        arsene.result = 'success' if food_delete else 'supplies food plate does not exist'
     except Exception as e:
         arsene.result = f'error {e}'
         logger.error(f'error {e}')

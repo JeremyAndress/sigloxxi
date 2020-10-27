@@ -5,8 +5,9 @@ from db.session import get_db
 from schemas.orders import (
     OrdersBase, OrdersUpdate,
     OrdersDetailBase, OrdersDetailUpdate,
-    OrdersCompletedBase, OrdersCompletedUpdate,
-    OrdersDetailCompletedBase, OrdersDetailCompletedUpdate
+    OrdersCompletedBase, OrdersCompletedUpdate,OrdersDetailCompletedUpdate,
+    OrdersDetailCompletedBase, OrdersDetailCompletedUpdate,
+    OrderList,ListOrdersDetail,ListOrdersCompleted,ListOrdersDetailCompleted
 )
 from schemas.response import Response_SM
 from schemas.user import UserCreate,UserList
@@ -28,7 +29,7 @@ from .controller import (
 )
 router = APIRouter()
 
-@router.get("/orders/get_all_orders/",response_model=List[OrdersUpdate],tags=["admin"])
+@router.get("/orders/get_all_orders/",response_model=OrderList,tags=["admin"])
 def get_all_orders(
     page: int,
     db: Session = Depends(get_db),
@@ -55,7 +56,7 @@ def delete_orders(
     response = delete_orders_cn(id, db)
     return response
 
-@router.put("/orders/update_orders_cn/", response_model = Response_SM,tags=["admin","cliente"])
+@router.put("/orders/update_orders/", response_model = Response_SM,tags=["admin","cliente"])
 def update_orders(
     order: OrdersUpdate,
     db: Session = Depends(get_db),
@@ -68,7 +69,7 @@ def update_orders(
 ## ORDERS DETAIL ##
 ###################
 
-@router.get("/orders_detail/get_all_orders_detail/", response_model = List[OrdersDetailUpdate],tags=["admin","cliente"])
+@router.get("/orders_detail/get_all_orders_detail/", response_model = ListOrdersDetail,tags=["admin","cliente"])
 def get_all_reservation(
         page: int,
         db: Session = Depends(get_db),
@@ -108,7 +109,7 @@ def delete_detail(
 ## ORDERS COMPLETED ##
 ######################
 
-@router.get("/orders_completed/get_all_orders_completed/", response_model = List[OrdersCompletedUpdate],tags=["admin","cliente"])
+@router.get("/orders_completed/get_all_orders_completed/", response_model = ListOrdersCompleted,tags=["admin","cliente"])
 def get_all_orders_completed(
         page: int,
         db: Session = Depends(get_db),
@@ -148,7 +149,7 @@ def delete_completed(
 ## ORDERS DETAIL COMPLETED ##
 #############################
 
-@router.get("/orders_detail_completed/get_all_orders_detail_completed/", response_model = List[OrdersDetailCompletedBase],tags=["admin","cliente"])
+@router.get("/orders_detail_completed/get_all_orders_detail_completed/", response_model = ListOrdersDetailCompleted,tags=["admin","cliente"])
 def get_all_orders_detail_completed(
         page: int,
         db: Session = Depends(get_db),

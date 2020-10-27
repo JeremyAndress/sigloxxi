@@ -1,6 +1,7 @@
 from typing import Optional, List
 from pydantic import BaseModel
 from datetime import datetime
+from .response import Pagination
 
 class OrdersBase(BaseModel):
     table_id: int
@@ -34,12 +35,35 @@ class OrdersCompletedUpdate(OrdersCompletedBase):
         orm_mode = True
 
 class OrdersDetailCompletedBase(BaseModel):
-    orders_completed_id: int
+    orders_id: int
     food_plate_id: int
     quantity: int
     served: datetime
 
 class OrdersDetailCompletedUpdate(OrdersDetailCompletedBase):
     id: int
+    class Config:
+        orm_mode = True
+
+
+
+
+class OrderList(Pagination):
+    data: List[OrdersUpdate]
+    class Config:
+        orm_mode = True
+
+class ListOrdersDetail(Pagination):
+    data: List[OrdersDetailUpdate]
+    class Config:
+        orm_mode = True
+
+class ListOrdersCompleted(Pagination):
+    data: List[OrdersCompletedUpdate]
+    class Config:
+        orm_mode = True
+
+class ListOrdersDetailCompleted(Pagination):
+    data: List[OrdersDetailCompletedUpdate]
     class Config:
         orm_mode = True

@@ -45,8 +45,8 @@ def update_orders_cn(order: OrdersUpdate, db: Session):
     try:
         order_data = db.query(Orders).filter(Orders.id == order.id).update({
             Orders.table_id: order.table_id,
-            Orders.status: reservation.status,
-            Orders.creation: reservation.creation
+            Orders.status: order.status,
+            Orders.creation: order.creation
         })
         db.commit()
         db.flush()
@@ -82,7 +82,7 @@ def create_orders_detail(detail: OrdersDetailBase, db:Session):
     arsene = Response_SM(status = False, result = '...')
     try:
         detail_data = OrdersDetail(
-            order_id = detail.order_id,
+            orders_id = detail.orders_id,
             food_plate_id = detail.food_plate_id,
             status = detail.status,
             quantity = detail.quantity,
@@ -101,8 +101,8 @@ def create_orders_detail(detail: OrdersDetailBase, db:Session):
 def update_orders_detail_cn(detail: OrdersDetailUpdate, db: Session):
     arsene = Response_SM(status = False, result = '...')
     try:
-        detail_delete = db.query(OrdersDetail).filter(OrdersDetail.id == detail.id).update({
-            OrdersDetail.order_id: detail.order_id,
+        detail_update = db.query(OrdersDetail).filter(OrdersDetail.id == detail.id).update({
+            OrdersDetail.orders_id: detail.orders_id,
             OrdersDetail.food_plate_id: detail.food_plate_id,
             OrdersDetail.status: detail.status,
             OrdersDetail.quantity: detail.quantity,
@@ -110,8 +110,8 @@ def update_orders_detail_cn(detail: OrdersDetailUpdate, db: Session):
         })
         db.commit()
         db.flush()
-        arsene.status = True if detail_delete else False
-        arsene.result = 'success' if detail_delete else 'order detail does not exist'
+        arsene.status = True if detail_update else False
+        arsene.result = 'success' if detail_update else 'order detail does not exist'
     except Exception as e:
         arsene.result = f'error {e}'
         logger.error(f'error {e}')
@@ -143,7 +143,7 @@ def create_orders_completed(completed: OrdersCompletedBase, db:Session):
     try:
         completed_data = OrdersCompleted(
             status = completed.status,
-            creation = completed.completed
+            creation = completed.creation
         )
         db.add(completed_data)
         db.commit()
@@ -190,15 +190,16 @@ def delete_orders_completed_cn(id: int, db: Session):
 
 def get_all_orders_detail_completed_cn(page: int, db: Session):
     detail_completed = paginate(db.query(OrdersDetailCompleted),page,10)
-    return completed 
+    return detail_completed 
 
 def create_orders_detail_completed(detail_completed: OrdersDetailCompletedBase, db:Session):
     arsene = Response_SM(status = False, result = '...')
     try:
         detail_completed_data = OrdersDetailCompleted(
-            orders_completed_id = detail_completed.orders_completed_id,
+            orders_id = detail_completed.orders_id,
             food_plate_id = detail_completed.food_plate_id,
-            quantity = detail_completed.quantity
+            quantity = detail_completed.quantity,
+            served = detail_completed.served
         )
         db.add(detail_completed_data)
         db.commit()
@@ -214,9 +215,10 @@ def update_orders_detail_completed_cn(detail_completed: OrdersDetailCompletedUpd
     arsene = Response_SM(status = False, result = '...')
     try:
         detail_completed_data = db.query(OrdersDetailCompleted).filter(OrdersDetailCompleted.id == detail_completed.id).update({
-            OrdersDetailCompleted.orders_completed_id: detail_completed.orders_completed_id,
+            OrdersDetailCompleted.orders_id: detail_completed.orders_id,
             OrdersDetailCompleted.food_plate_id: detail_completed.food_plate_id,
-            OrdersDetailCompleted.quantity: detail_completed.quantity
+            OrdersDetailCompleted.quantity: detail_completed.quantity,
+            OrdersDetailCompleted.served: detail_completed.served
         })
         db.commit()
         db.flush()

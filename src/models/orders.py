@@ -30,7 +30,7 @@ class OrdersCompleted(Base):
 class OrdersDetailCompleted(Base):
     __tablename__ = 'orders_detail_completed'
     id = Column(Integer,primary_key = True)
-    orders_completed_id = Column(Integer, ForeignKey("orders_completed.id", ondelete = 'cascade'))
+    orders_id = Column(Integer, ForeignKey("orders_completed.id", ondelete = 'cascade'))
     food_plate_id = Column(Integer, ForeignKey("food_plate.id", ondelete = 'cascade'))
     quantity = Column(Integer)
     served = Column(DateTime)

@@ -2,13 +2,19 @@ from models import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 
+class OrderStatus(Base):
+    __tablename__ = 'orders_status'
+    id = Column(Integer, primary_key = True)
+    name = Column(String)
+
 class Orders(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key = True)
     table_id = Column(Integer, ForeignKey("tables.id", ondelete = 'cascade'))
-    status = Column(String)
     creation = Column(DateTime)
+    status_id = Column(Integer, ForeignKey("orders_status.id", ondelete = 'cascade'))
     tables = relationship("Tables")
+    order_status = relationship("OrderStatus")
 
 class OrdersDetail(Base):
     __tablename__ = 'orders_detail'

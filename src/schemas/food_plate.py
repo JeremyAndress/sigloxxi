@@ -19,6 +19,11 @@ class SuppliesPlateCreate(BaseModel):
 class SuppliesPlate(SuppliesPlateBase):
     id: int
 
+class SuppliesList(SuppliesPlateCreate):
+    id: int
+    class Config:
+        orm_mode = True
+
 class FoodPlateCreate(FoodPlateBase):
     supplies: List[SuppliesPlate]
     @validator('supplies')

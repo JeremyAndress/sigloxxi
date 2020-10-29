@@ -7,4 +7,4 @@ from .tables import Tables
 from .food_plate import FoodPlate
 from .supplies import Supplies, SuppliesPlate
 from .reservation import Reservation, ReservationStatus
-from .orders import Orders, OrdersDetail, OrdersCompleted, OrdersDetailCompleted
+from .orders import OrderStatus,Orders, OrdersDetail, OrdersCompleted, OrdersDetailCompleted

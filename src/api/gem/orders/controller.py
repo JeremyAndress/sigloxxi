@@ -24,10 +24,11 @@ def get_all_orders_cn(page:int, db:Session):
 
 def create_orders(order: OrdersBase, db:Session):
     arsene = Response_SM(status = False, result = '...')
+    logger.info(f'status {order.status_id}')
     try:
         orders_data = Orders(
             table_id = order.table_id,
-            status = order.status,
+            status_id = order.status_id,
             creation = order.creation
         )
         db.add(orders_data)
@@ -45,7 +46,7 @@ def update_orders_cn(order: OrdersUpdate, db: Session):
     try:
         order_data = db.query(Orders).filter(Orders.id == order.id).update({
             Orders.table_id: order.table_id,
-            Orders.status: order.status,
+            Orders.status_id: order.status_id,
             Orders.creation: order.creation
         })
         db.commit()

@@ -3,7 +3,10 @@ from sqlalchemy.orm import Session
 from typing import List
 from schemas.user import UserCreate
 from db.session import get_db
-from schemas.food_plate import FoodPlateList,FoodPlateCreate,SuppliesPlateCreate
+from schemas.food_plate import (
+    SuppliesList,
+    FoodPlateList,FoodPlateCreate,SuppliesPlateCreate
+)
 from api.deps import get_admin_user,get_client_user,get_chef_user
 from schemas.response import Response_SM
 from .controller import (
@@ -41,7 +44,7 @@ def delete_food_plates(
     response = delete_fp_cn(id,db)
     return response
 
-@router.get('/supplies_food_plates/get_all_supplies_food_plates/',tags=["admin","cocina"])
+@router.get('/supplies_food_plates/get_all_supplies_food_plates/',response_model=List[SuppliesList],tags=["admin","cocina"])
 def get_all_supplies_food_plates(
     food_plate_id:int,
     db: Session = Depends(get_db),

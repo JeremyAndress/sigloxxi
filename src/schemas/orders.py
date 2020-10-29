@@ -5,7 +5,7 @@ from .response import Pagination
 
 class OrdersBase(BaseModel):
     table_id: int
-    status: str
+    status_id: int
     creation: datetime
 
 class OrdersUpdate(OrdersBase):

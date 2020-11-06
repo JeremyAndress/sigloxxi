@@ -56,6 +56,17 @@ def get_client_user(
         raise credentials_exception
     return user
 
+def get_client_chofer_user(
+    token_data: str = Depends(get_token_bearer),db: Session = Depends(get_db)
+):
+    user = get_by_email(db, email=token_data.email) or {}
+    if not user:
+        raise credentials_exception
+    rol = getattr(getattr(user,'rol'),'id',None) 
+    if rol not in [1,2,4]:
+        raise credentials_exception
+    return user
+
 def get_grocer_user(
     token_data: str = Depends(get_token_bearer),db: Session = Depends(get_db)
 ):

@@ -7,7 +7,7 @@ from schemas.food_plate import (
     SuppliesList,
     FoodPlateList,FoodPlateCreate,SuppliesPlateCreate
 )
-from api.deps import get_admin_user,get_client_user,get_chef_user
+from api.deps import get_admin_user,get_client_chofer_user,get_chef_user
 from schemas.response import Response_SM
 from .controller import (
     get_all_fp_cn ,create_fp_cn ,
@@ -21,7 +21,7 @@ router = APIRouter()
 def get_all_food_plates(
     page:int,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_client_user)
+    current_user: UserCreate = Depends(get_client_chofer_user)
 ):
     fp = get_all_fp_cn(page,db)
     return fp

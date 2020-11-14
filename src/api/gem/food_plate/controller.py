@@ -11,6 +11,28 @@ def get_all_fp_cn(page:int,db:Session):
     fp  = paginate(db.query(FoodPlate),page,10)
     return fp
 
+def get_stock_cn(food:int,db:Session):
+    supplies_plate  = db.query(SuppliesPlate).filter(
+        SuppliesPlate.food_plate_id == food
+    ).all()
+    stock = 0
+    stock_list = []
+    try:
+        for sp in supplies_plate:
+            quantity_sp = db.query(Supplies.quantity).filter(
+                Supplies.id == sp.supplies_id
+            ).first()
+            logger.info(f'quantity {quantity_sp}')
+            logger.info(f'supple {sp}')
+            if quantity_sp and isinstance(quantity_sp,tuple):
+                stock_dv = int(quantity_sp[0] / sp.quantity)
+                stock_list.append(stock_dv)
+    except Exception as e:
+        logger.info(f'errorx {e}')
+    logger.info(f'supplies {supplies_plate}')
+    return {'stock':min(stock_list) if stock_list else 0}
+ 
+
 def get_all_sp_fp_cn(food_plate_id:int,db:Session):
     sp = db.query(SuppliesPlate).filter(
         SuppliesPlate.food_plate_id == food_plate_id

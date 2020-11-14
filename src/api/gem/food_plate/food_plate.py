@@ -10,9 +10,10 @@ from schemas.food_plate import (
 from api.deps import get_admin_user,get_client_chofer_user,get_chef_user
 from schemas.response import Response_SM
 from .controller import (
-    get_all_fp_cn ,create_fp_cn ,
-    delete_fp_cn, get_all_sp_fp_cn ,
-    delete_sp_fp_cn,create_sp_fp_cn
+    get_all_fp_cn, create_fp_cn,
+    delete_fp_cn, get_all_sp_fp_cn,
+    delete_sp_fp_cn, create_sp_fp_cn,
+    get_stock_cn
 )
 
 router = APIRouter()
@@ -24,6 +25,15 @@ def get_all_food_plates(
     current_user: UserCreate = Depends(get_client_chofer_user)
 ):
     fp = get_all_fp_cn(page,db)
+    return fp
+
+@router.get('/food_plates/get_stock/',tags=["admin","cliente","cocina"])
+def get_stock(
+    food:int,
+    db: Session = Depends(get_db),
+    current_user: UserCreate = Depends(get_client_chofer_user)
+):
+    fp = get_stock_cn(food,db)
     return fp
 
 @router.post("/food_plates/create_food_plates/", response_model = Response_SM,tags=["admin","cocina"])

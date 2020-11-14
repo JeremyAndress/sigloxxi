@@ -30,8 +30,7 @@ def get_all_food_plates(
 @router.get('/food_plates/get_stock/',tags=["admin","cliente","cocina"])
 def get_stock(
     food:int,
-    db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_client_chofer_user)
+    db: Session = Depends(get_db)
 ):
     fp = get_stock_cn(food,db)
     return fp

@@ -28,7 +28,7 @@ def get_stock_cn(food:int,db:Session):
                 stock_dv = int(quantity_sp[0] / sp.quantity)
                 stock_list.append(stock_dv)
     except Exception as e:
-        logger.info(f'errorx {e}')
+        logger.info(f'error {e}')
     logger.info(f'supplies {supplies_plate}')
     return {'stock':min(stock_list) if stock_list else 0}
  

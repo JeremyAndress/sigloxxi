@@ -4,16 +4,16 @@ from datetime import datetime
 from utils.logging import logger
 from utils.pagination import paginate
 from schemas.user import UserList
-from schemas.response import Response_SM
+from schemas.response import Response_SM, Response_SM_ID
 from schemas.orders import (
-    OrdersBase, OrdersUpdate,
+    OrdersBase, OrdersUpdate, OrderCreateOrders,
     OrdersDetailBase, OrdersDetailUpdate,
     OrdersCompletedBase, OrdersCompletedUpdate,
     OrdersDetailCompletedBase, OrdersDetailCompletedUpdate
 )
 from models import (
     Orders, OrdersDetail,OrdersCompleted,
-    OrdersDetailCompleted
+    OrdersDetailCompleted,FoodPlate
 )
 
 from api.gem.tables.controller import count_tables
@@ -21,6 +21,38 @@ from api.gem.tables.controller import count_tables
 def get_all_orders_cn(page:int, db:Session):
     orders = paginate(db.query(Orders),page,10)
     return orders 
+
+def create_orders_ocd(order: OrderCreateOrders, db:Session):
+    arsene = Response_SM_ID(status = False, result = '...', id_rs = 0)
+    logger.info(f'status {order.status_id}')
+    try:
+        orders_data = Orders(
+            table_id = order.table_id,
+            status_id = order.status_id,
+            creation = order.creation
+        )
+        db.add(orders_data)
+        db.commit()
+        db.refresh(orders_data)
+        arsene.status = True if orders_data.id else False
+        arsene.result = 'success' if orders_data else 'order cant create'
+        if arsene.status: 
+            arsene.id_rs = orders_data.id
+            for od in order.orders_detail:
+                plate = db.query(FoodPlate).filter(FoodPlate.id == od.food_plate_id).first()
+                if plate:
+                    order_detail_data = OrdersDetail(
+                        orders_id = orders_data.id,
+                        food_plate_id = od.food_plate_id,
+                        status = 'Creada', quantity = od.quantity
+                    )
+                    db.add(order_detail_data)
+                    db.commit()
+                    db.refresh(order_detail_data)
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene
 
 def create_orders(order: OrdersBase, db:Session):
     arsene = Response_SM(status = False, result = '...')
@@ -74,6 +106,10 @@ def delete_orders_cn(id: int, db: Session):
 ###################
 ## ORDERS DETAIL ##
 ###################
+
+def get_orders_detail_fo_cn(order_id: int, db: Session):
+    detail  = db.query(OrdersDetail).filter(OrdersDetail.orders_id == order_id).all()
+    return detail
 
 def get_all_orders_detail_cn(page: int, db: Session):
     detail = paginate(db.query(OrdersDetail),page,10)

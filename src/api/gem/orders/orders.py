@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from db.session import get_db
 from schemas.orders import (
-    OrdersBase, OrdersUpdate,
+    OrdersBase, OrdersUpdate, OrderCreateOrders,
     OrdersDetailBase, OrdersDetailUpdate,
     OrdersCompletedBase, OrdersCompletedUpdate,OrdersDetailCompletedUpdate,
     OrdersDetailCompletedBase, OrdersDetailCompletedUpdate,
@@ -18,12 +18,12 @@ from .controller import (
     get_all_orders_cn, create_orders, update_orders_cn, delete_orders_cn,
     get_all_orders_detail_cn as get_orders_detail,
     create_orders_detail, update_orders_detail_cn,
-    delete_orders_detail_cn,
+    delete_orders_detail_cn, get_orders_detail_fo_cn,
     get_all_orders_completed_cn as get_orders_completed,
     create_orders_completed, update_orders_completed_cn,
     delete_orders_completed_cn,
     get_all_orders_detail_completed_cn as get_ords_detail_cmp,
-    create_orders_detail_completed,
+    create_orders_detail_completed, create_orders_ocd,
     update_orders_detail_completed_cn as upd_ords_detail_completed,
     delete_orders_detail_completed_cn as dlt_ords_detail_completed
 )
@@ -47,6 +47,14 @@ def orders_create(
     response = create_orders(order, db)
     return response
 
+@router.post("/orders/orders_create_ocd/",tags=["admin","cliente"])
+def orders_create_ocd(
+    order: OrderCreateOrders, 
+    db:Session = Depends(get_db),
+):
+    response = create_orders_ocd(order, db)
+    return response
+
 @router.delete("/orders/delete_orders/", response_model = Response_SM,tags=["admin","cliente"])
 def delete_orders(
     id: int,
@@ -68,6 +76,14 @@ def update_orders(
 ###################
 ## ORDERS DETAIL ##
 ###################
+
+@router.get("/orders_detail/get_orders_detail_for_order/",tags=["admin","cliente"])
+def get_orders_detail_for_order(
+        order_id: int,
+        db: Session = Depends(get_db)
+    ):
+    response = get_orders_detail_fo_cn(order_id, db)
+    return response
 
 @router.get("/orders_detail/get_all_orders_detail/", response_model = ListOrdersDetail,tags=["admin","cliente"])
 def get_all_reservation(

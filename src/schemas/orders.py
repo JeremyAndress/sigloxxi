@@ -1,12 +1,22 @@
+from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
-from datetime import datetime
 from .response import Pagination
+
+class OrderDtlOrder(BaseModel):
+    food_plate_id: int
+    quantity: int
+    status: str = 'Creada'
 
 class OrdersBase(BaseModel):
     table_id: int
     status_id: int
     creation: datetime
+
+class OrderCreateOrders(OrdersBase):
+    creation: datetime = datetime.now()
+    status_id: int = 1
+    orders_detail : List[OrderDtlOrder]
 
 class OrdersUpdate(OrdersBase):
     id: int

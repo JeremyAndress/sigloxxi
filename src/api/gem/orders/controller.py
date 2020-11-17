@@ -13,7 +13,7 @@ from schemas.orders import (
 )
 from models import (
     Orders, OrdersDetail,OrdersCompleted,
-    OrdersDetailCompleted,FoodPlate
+    OrdersDetailCompleted,FoodPlate,OrderStatus
 )
 
 from api.gem.tables.controller import count_tables
@@ -21,6 +21,18 @@ from api.gem.tables.controller import count_tables
 def get_all_orders_cn(page:int, db:Session):
     orders = paginate(db.query(Orders),page,10)
     return orders 
+
+def get_order_info_cn(id,db:Session):
+    order = db.query(Orders).filter(Orders.id == id).first()
+    if order:
+        status = db.query(OrderStatus).filter(OrderStatus.id == order.status_id).first()
+        order = {
+            'status': status.name,
+            'table_id': order.table_id,
+            'id':id,
+            'creation':order.creation
+        }
+    return order 
 
 def create_orders_ocd(order: OrderCreateOrders, db:Session):
     arsene = Response_SM_ID(status = False, result = '...', id_rs = 0)

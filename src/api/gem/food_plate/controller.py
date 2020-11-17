@@ -11,6 +11,10 @@ def get_all_fp_cn(page:int,db:Session):
     fp  = paginate(db.query(FoodPlate),page,10)
     return fp
 
+def get_all_fp_wjwt_cn(db:Session):
+    fp = db.query(FoodPlate).all()
+    return fp
+
 def get_stock_cn(food:int,db:Session):
     supplies_plate  = db.query(SuppliesPlate).filter(
         SuppliesPlate.food_plate_id == food

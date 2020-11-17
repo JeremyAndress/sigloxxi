@@ -13,6 +13,14 @@ class OrdersBase(BaseModel):
     status_id: int
     creation: datetime
 
+class OrdersInfo(BaseModel):
+    table_id: int
+    id: int
+    status: str
+    creation: datetime
+    class Config:
+        orm_mode = True
+
 class OrderCreateOrders(OrdersBase):
     creation: datetime = datetime.now()
     status_id: int = 1

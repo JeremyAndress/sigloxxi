@@ -26,8 +26,8 @@ def reservation_create(
 @router.get("/tables/get_all_tables/", response_model = ListTables,tags=["admin"])
 def get_all_reservation(
         page: int,
-        db: Session = Depends(get_db),
-        current_user: UserCreate = Depends(get_admin_user)
+        db: Session = Depends(get_db)
+        # current_user: UserCreate = Depends(get_admin_user)
     ):
     reservation = get_all_tables(page, db)
     return reservation

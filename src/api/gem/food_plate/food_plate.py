@@ -13,7 +13,7 @@ from .controller import (
     get_all_fp_cn, create_fp_cn,
     delete_fp_cn, get_all_sp_fp_cn,
     delete_sp_fp_cn, create_sp_fp_cn,
-    get_stock_cn
+    get_stock_cn, get_all_fp_wjwt_cn
 )
 
 router = APIRouter()
@@ -25,6 +25,14 @@ def get_all_food_plates(
     current_user: UserCreate = Depends(get_client_chofer_user)
 ):
     fp = get_all_fp_cn(page,db)
+    return fp
+
+@router.get('/food_plates/get_all_food_plates_wjwt/',tags=["admin","cliente","cocina"])
+def get_all_food_plates_wjwt(
+    page:int,
+    db: Session = Depends(get_db)
+):
+    fp = get_all_fp_wjwt_cn(db)
     return fp
 
 @router.get('/food_plates/get_stock/',tags=["admin","cliente","cocina"])

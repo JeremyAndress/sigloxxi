@@ -4,7 +4,7 @@ from typing import List
 from db.session import get_db
 from schemas.orders import (
     OrdersBase, OrdersUpdate, OrderCreateOrders, OrdersInfo,
-    OrdersDetailBase, OrdersDetailUpdate,
+    OrdersDetailBase, OrdersDetailUpdate, OrderDtlOrder,
     OrdersCompletedBase, OrdersCompletedUpdate,OrdersDetailCompletedUpdate,
     OrdersDetailCompletedBase, OrdersDetailCompletedUpdate,
     OrderList,ListOrdersDetail,ListOrdersCompleted,ListOrdersDetailCompleted
@@ -14,6 +14,7 @@ from schemas.user import UserCreate,UserList
 from schemas.token import TokenUser
 from core.security import create_access_token
 from api.deps import get_admin_user, get_client_user
+from .detail import create_detail_cn
 from .controller import (
     get_all_orders_cn, create_orders, update_orders_cn, delete_orders_cn,
     get_all_orders_detail_cn as get_orders_detail,
@@ -66,6 +67,14 @@ def orders_create_ocd(
         raise HTTPException(status_code=400, detail=response.result)
     return response
 
+@router.post("/orders/orders_update_ocd/",tags=["admin","cliente"])
+def orders_update_ocd(
+    order: List[OrderDtlOrder], id:int ,
+    db:Session = Depends(get_db)
+): 
+    response = create_detail_cn(id,order,db)
+    return {"status":True}
+
 @router.delete("/orders/delete_orders/", response_model = Response_SM,tags=["admin","cliente"])
 def delete_orders(
     id: int,
@@ -79,7 +88,7 @@ def delete_orders(
 def update_orders(
     order: OrdersUpdate,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_client_user)
+    # current_user: UserCreate = Depends(get_client_user)
 ):
     response = update_orders_cn(order, db)
     return response

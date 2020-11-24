@@ -15,7 +15,7 @@ from models import (
     Orders, OrdersDetail,OrdersCompleted,
     OrdersDetailCompleted,FoodPlate,OrderStatus
 )
-
+from .detail import create_detail_cn
 from api.gem.tables.controller import count_tables
 
 def get_all_orders_cn(page:int, db:Session):
@@ -50,17 +50,18 @@ def create_orders_ocd(order: OrderCreateOrders, db:Session):
         arsene.result = 'success' if orders_data else 'order cant create'
         if arsene.status: 
             arsene.id_rs = orders_data.id
-            for od in order.orders_detail:
-                plate = db.query(FoodPlate).filter(FoodPlate.id == od.food_plate_id).first()
-                if plate:
-                    order_detail_data = OrdersDetail(
-                        orders_id = orders_data.id,
-                        food_plate_id = od.food_plate_id,
-                        status = 'Creada', quantity = od.quantity
-                    )
-                    db.add(order_detail_data)
-                    db.commit()
-                    db.refresh(order_detail_data)
+            create_detail_cn(arsene.id_rs,order.orders_detail,db)
+            # for od in order.orders_detail:
+            #     plate = db.query(FoodPlate).filter(FoodPlate.id == od.food_plate_id).first()
+            #     if plate:
+            #         order_detail_data = OrdersDetail(
+            #             orders_id = orders_data.id,
+            #             food_plate_id = od.food_plate_id,
+            #             status = 'Creada', quantity = od.quantity
+            #         )
+            #         db.add(order_detail_data)
+            #         db.commit()
+            #         db.refresh(order_detail_data)
     except Exception as e:
         arsene.result = f'error {e}'
         logger.error(f'error {e}')

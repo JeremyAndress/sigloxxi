@@ -29,7 +29,6 @@ def get_all_food_plates(
 
 @router.get('/food_plates/get_all_food_plates_wjwt/',tags=["admin","cliente","cocina"])
 def get_all_food_plates_wjwt(
-    page:int,
     db: Session = Depends(get_db)
 ):
     fp = get_all_fp_wjwt_cn(db)

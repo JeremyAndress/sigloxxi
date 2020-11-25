@@ -122,7 +122,18 @@ def delete_orders_cn(id: int, db: Session):
 
 def get_orders_detail_fo_cn(order_id: int, db: Session):
     detail  = db.query(OrdersDetail).filter(OrdersDetail.orders_id == order_id).all()
-    return detail
+    data = []
+    for dt in detail:
+        detail_data = {
+            "id": dt.id,
+            "served": dt.served,
+            "quantity": dt.quantity
+        }
+        if dt.food_plate:
+            detail_data['name'] = dt.food_plate.name
+            detail_data['price'] = dt.food_plate.price * dt.quantity
+        data.append(detail_data)
+    return data
 
 def get_all_orders_detail_cn(page: int, db: Session):
     detail = paginate(db.query(OrdersDetail),page,10)

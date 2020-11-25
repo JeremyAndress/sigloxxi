@@ -13,7 +13,7 @@ from schemas.response import Response_SM
 from schemas.user import UserCreate,UserList
 from schemas.token import TokenUser
 from core.security import create_access_token
-from api.deps import get_admin_user, get_client_user
+from api.deps import get_admin_user, get_client_user, get_chef_user
 from .detail import create_detail_cn
 from .controller import (
     get_all_orders_cn, create_orders, update_orders_cn, delete_orders_cn,
@@ -23,6 +23,7 @@ from .controller import (
     get_all_orders_completed_cn as get_orders_completed,
     create_orders_completed, update_orders_completed_cn,
     delete_orders_completed_cn, get_order_info_cn,
+    update_orders_status, orders_change_status_cn,
     get_all_orders_detail_completed_cn as get_ords_detail_cmp,
     create_orders_detail_completed, create_orders_ocd,
     update_orders_detail_completed_cn as upd_ords_detail_completed,
@@ -34,7 +35,7 @@ router = APIRouter()
 def get_all_orders(
     page: int,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_admin_user)
+    current_user: UserCreate = Depends(get_chef_user)
 ):
     orders = get_all_orders_cn(page,db)
     return orders
@@ -52,7 +53,7 @@ def get_order_info(
 def orders_create(
     order: OrdersBase, 
     db:Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_client_user)
+    current_user: UserCreate = Depends(get_chef_user)
 ):
     response = create_orders(order, db)
     return response
@@ -67,13 +68,24 @@ def orders_create_ocd(
         raise HTTPException(status_code=400, detail=response.result)
     return response
 
-@router.post("/orders/orders_update_ocd/",tags=["admin","cliente"])
+@router.put("/orders/orders_update_ocd/",tags=["admin","cliente"])
 def orders_update_ocd(
     order: List[OrderDtlOrder], id:int ,
     db:Session = Depends(get_db)
 ): 
+    update_orders_status(id,1,db)
     response = create_detail_cn(id,order,db)
     return {"status":True}
+
+@router.put("/orders/orders_change_status/",tags=["admin","cliente"])
+def orders_change_status(
+    id:int ,
+    status_id : int,
+    current_user: UserCreate = Depends(get_chef_user),
+    db:Session = Depends(get_db)
+): 
+    response = orders_change_status_cn(id,status_id,db)
+    return response
 
 @router.delete("/orders/delete_orders/", response_model = Response_SM,tags=["admin","cliente"])
 def delete_orders(
@@ -118,7 +130,7 @@ def get_all_reservation(
 def orders_detail_create(
         order: OrdersDetailBase, 
         db: Session = Depends(get_db),
-        current_user: UserCreate = Depends(get_admin_user)
+        current_user: UserCreate = Depends(get_chef_user)
     ):
     response = create_orders_detail(order,db)
     return response
@@ -127,7 +139,7 @@ def orders_detail_create(
 def update_detail(
     upd_detail: OrdersDetailUpdate,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_admin_user)
+    current_user: UserCreate = Depends(get_chef_user)
 ):
     response = update_orders_detail_cn(upd_detail, db)
     return response
@@ -136,7 +148,7 @@ def update_detail(
 def delete_detail(
     id: int,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_admin_user)
+    current_user: UserCreate = Depends(get_chef_user)
 ):
     response = delete_orders_detail_cn(id, db)
     return response

@@ -103,6 +103,44 @@ def update_orders_cn(order: OrdersUpdate, db: Session):
         logger.error(f'error {e}')
     return arsene
 
+def update_orders_status(id:int,status:int, db: Session):
+    arsene = Response_SM(status = False, result = '...')
+    try:
+        order_data = db.query(Orders).filter(Orders.id == id).update({
+            Orders.status_id: status
+        })
+        db.commit()
+        db.flush()
+        arsene.status = True if order_data else False
+        arsene.result = 'success' if order_data else 'order does not exist'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene
+
+def orders_change_status_cn(id:int,status:int, db: Session):
+    arsene = Response_SM(status = False, result = '...')
+    try:
+        order_data = db.query(Orders).filter(Orders.id == id).update({
+            Orders.status_id: status
+        })
+        db.commit()
+        db.flush()
+        status_str = 'En Preparacion' if status == 2 else 'Finalizado' if status == 3 else 'Cancelado'
+        served = datetime.now() if status == 3 else None
+        order_detail = db.query(OrdersDetail).filter(OrdersDetail.orders_id == id).update({
+            OrdersDetail.status : status_str,
+            OrdersDetail.served : served
+        })
+        db.commit()
+        db.flush()
+        arsene.status = True if order_data else False
+        arsene.result = 'success' if order_data else 'order does not exist'
+    except Exception as e:
+        arsene.result = f'error {e}'
+        logger.error(f'error {e}')
+    return arsene
+
 def delete_orders_cn(id: int, db: Session):
     arsene = Response_SM(status = False, result= '...')
     try:
@@ -127,7 +165,8 @@ def get_orders_detail_fo_cn(order_id: int, db: Session):
         detail_data = {
             "id": dt.id,
             "served": dt.served,
-            "quantity": dt.quantity
+            "quantity": dt.quantity,
+            "status": dt.status
         }
         if dt.food_plate:
             detail_data['name'] = dt.food_plate.name

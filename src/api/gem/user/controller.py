@@ -37,7 +37,7 @@ def create_user(db: Session,obj_in: UserCreate):
     return arsene
 
 def get_all_user_cn(page,db: Session):
-    user  = paginate(db.query(User),page,10)
+    user  = paginate(db.query(User),page,100)
     return user
 
 def delete_user_cn(id:int,db:Session):

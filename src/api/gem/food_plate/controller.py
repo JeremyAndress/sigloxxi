@@ -8,7 +8,7 @@ from schemas.response import Response_SM
 from models import FoodPlate,SuppliesPlate,Supplies
 
 def get_all_fp_cn(page:int,db:Session):
-    fp  = paginate(db.query(FoodPlate),page,10)
+    fp  = paginate(db.query(FoodPlate),page,100)
     return fp
 
 def get_all_fp_wjwt_cn(db:Session):

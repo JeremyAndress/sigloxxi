@@ -6,7 +6,7 @@ from schemas.response import Response_SM
 from models import Supplies
 
 def get_all_supplies_cn(page:int,db:Session):
-    sps  = paginate(db.query(Supplies),page,10)
+    sps  = paginate(db.query(Supplies),page,100)
     return sps
 
 def create_sps_cn(sps:SuppliesBase,db:Session):

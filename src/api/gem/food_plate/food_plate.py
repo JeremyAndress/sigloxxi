@@ -79,8 +79,8 @@ def delete_supplies_food_plates(
     return response
 
 
-@router.post("/food_plates/create_supplies_food_plates/", response_model = Response_SM,tags=["admin","cocina"])
-def create_food_plates(
+@router.put("/food_plates/update_supplies_food_plates/", response_model = Response_SM,tags=["admin","cocina"])
+def update_supplies_food_plates(
     supplies_fp:List[SuppliesPlateCreate], 
     db:Session = Depends(get_db),
     current_user: UserCreate = Depends(get_chef_user)

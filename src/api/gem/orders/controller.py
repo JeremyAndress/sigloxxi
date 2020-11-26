@@ -24,11 +24,11 @@ def get_all_orders_cn(page:int, db:Session):
     return orders 
 
 def get_all_orders_creadas_cn(page:int, db:Session):
-    orders = paginate(db.query(Orders).filter(Orders.status_id == 1),page,10)
+    orders = paginate(db.query(Orders).filter(Orders.status_id == 1),page,200)
     return orders 
 
 def get_all_orders_en_preparacion_cn(page:int, db:Session):
-    orders = paginate(db.query(Orders).filter(Orders.status_id == 2),page,10)
+    orders = paginate(db.query(Orders).filter(Orders.status_id == 2),page,200)
     return orders 
 
 def get_order_info_cn(id,db:Session):

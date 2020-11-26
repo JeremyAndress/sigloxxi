@@ -10,7 +10,7 @@ from models import Reservation, ReservationStatus
 from api.gem.tables.controller import count_tables
 
 def get_all_reservation_cn(page:int, db:Session):
-    reservation = paginate(db.query(Reservation),page,10)
+    reservation = paginate(db.query(Reservation),page,100)
     return reservation
 
 def get_user_reservation_cn(user:UserList,page:int, db:Session):

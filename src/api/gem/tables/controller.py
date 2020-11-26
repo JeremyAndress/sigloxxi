@@ -10,7 +10,7 @@ def count_tables(db:Session):
     return count
 
 def get_all_tables(page:int, db: Session):
-    tables = paginate(db.query(Tables),page,10)
+    tables = paginate(db.query(Tables),page,100)
     return tables
 
 def create_tables(tables: TablesBase, db: Session):

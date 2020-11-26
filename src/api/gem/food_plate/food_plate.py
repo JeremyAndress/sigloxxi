@@ -73,7 +73,7 @@ def get_all_supplies_food_plates(
 def delete_supplies_food_plates(
     id:int,
     db: Session = Depends(get_db),
-    current_user: UserCreate = Depends(get_admin_user)
+    current_user: UserCreate = Depends(get_chef_user)
 ):
     response = delete_sp_fp_cn(id,db)
     return response

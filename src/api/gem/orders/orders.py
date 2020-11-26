@@ -42,7 +42,7 @@ def get_all_orders(
     orders = get_all_orders_cn(page,db)
     return orders
 
-@router.get("/orders/get_all_orders_status/",response_model=OrderList,tags=["admin"])
+@router.get("/orders/get_all_orders_status/",tags=["admin"])
 def get_all_orders_status(
     page: int,
     db: Session = Depends(get_db),

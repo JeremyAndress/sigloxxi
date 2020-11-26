@@ -23,6 +23,10 @@ def get_all_orders_cn(page:int, db:Session):
     orders = paginate(db.query(Orders),page,10)
     return orders 
 
+def get_all_orders_status_cn(page:int, db:Session):
+    orders = paginate(db.query(OrderStatus),page,100)
+    return orders 
+
 def get_all_orders_creadas_cn(page:int, db:Session):
     orders = paginate(db.query(Orders).filter(Orders.status_id == 1),page,200)
     return orders 

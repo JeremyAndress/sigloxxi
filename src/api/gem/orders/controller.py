@@ -1,3 +1,4 @@
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import extract
 from datetime import datetime
@@ -51,17 +52,6 @@ def create_orders_ocd(order: OrderCreateOrders, db:Session):
         if arsene.status: 
             arsene.id_rs = orders_data.id
             create_detail_cn(arsene.id_rs,order.orders_detail,db)
-            # for od in order.orders_detail:
-            #     plate = db.query(FoodPlate).filter(FoodPlate.id == od.food_plate_id).first()
-            #     if plate:
-            #         order_detail_data = OrdersDetail(
-            #             orders_id = orders_data.id,
-            #             food_plate_id = od.food_plate_id,
-            #             status = 'Creada', quantity = od.quantity
-            #         )
-            #         db.add(order_detail_data)
-            #         db.commit()
-            #         db.refresh(order_detail_data)
     except Exception as e:
         arsene.result = f'error {e}'
         logger.error(f'error {e}')
@@ -128,7 +118,10 @@ def orders_change_status_cn(id:int,status:int, db: Session):
         db.flush()
         status_str = 'En Preparacion' if status == 2 else 'Finalizado' if status == 3 else 'Cancelado'
         served = datetime.now() if status == 3 else None
-        order_detail = db.query(OrdersDetail).filter(OrdersDetail.orders_id == id).update({
+        order_detail = db.query(OrdersDetail).filter(and_(
+            OrdersDetail.orders_id == id,
+            OrdersDetail.served == None
+        )).update({
             OrdersDetail.status : status_str,
             OrdersDetail.served : served
         })

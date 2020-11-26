@@ -24,6 +24,7 @@ from .controller import (
     create_orders_completed, update_orders_completed_cn,
     delete_orders_completed_cn, get_order_info_cn,
     update_orders_status, orders_change_status_cn,
+    get_all_orders_creadas_cn, get_all_orders_en_preparacion_cn,
     get_all_orders_detail_completed_cn as get_ords_detail_cmp,
     create_orders_detail_completed, create_orders_ocd,
     update_orders_detail_completed_cn as upd_ords_detail_completed,
@@ -38,6 +39,24 @@ def get_all_orders(
     current_user: UserCreate = Depends(get_chef_user)
 ):
     orders = get_all_orders_cn(page,db)
+    return orders
+
+@router.get("/orders/get_all_orders_creadas/",response_model=OrderList,tags=["admin"])
+def get_all_orders_creadas(
+    page: int,
+    db: Session = Depends(get_db),
+    current_user: UserCreate = Depends(get_chef_user)
+):
+    orders = get_all_orders_creadas_cn(page,db)
+    return orders
+
+@router.get("/orders/get_all_orders_en_preparacion/",response_model=OrderList,tags=["admin"])
+def get_all_orders_en_preparacion(
+    page: int,
+    db: Session = Depends(get_db),
+    current_user: UserCreate = Depends(get_chef_user)
+):
+    orders = get_all_orders_en_preparacion_cn(page,db)
     return orders
 
 @router.get("/orders/get_order_info/",response_model=OrdersInfo, tags=["admin"])

@@ -20,7 +20,7 @@ from .detail import create_detail_cn
 from api.gem.tables.controller import count_tables
 
 def get_all_orders_cn(page:int, db:Session):
-    orders = paginate(db.query(Orders),page,10)
+    orders = paginate(db.query(Orders),page,10000)
     return orders 
 
 def get_all_orders_status_cn(page:int, db:Session):
